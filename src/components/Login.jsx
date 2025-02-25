@@ -6,6 +6,8 @@ import { toast, ToastContainer } from "react-toastify";
 import { FaGoogle } from "react-icons/fa";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import { AuthContext } from "../providers/AuthProvider";
+import { BackgroundGradient } from "./ui/background-gradient";
+import { AuroraBackground } from "./ui/aurora-background";
 
 const Login = () => {
   useEffect(() => {
@@ -75,8 +77,8 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="card bg-base-100 w-full max-w-sm shadow-2xl p-6">
+    <AuroraBackground className="flex items-center justify-center min-h-screen bg-white">
+      <BackgroundGradient className="card bg-white w-full max-w-sm shadow-2xl p-6 rounded-xl">
         <ToastContainer position="top-center" />
         <div className="text-center">
           <h1 className="text-5xl font-bold mb-4">Login now!</h1>
@@ -90,7 +92,7 @@ const Login = () => {
               type="email"
               name="email"
               placeholder="email"
-              className="input input-bordered"
+              className="input input-bordered text-white"
               required
             />
           </div>
@@ -102,7 +104,7 @@ const Login = () => {
               type="password"
               name="password"
               placeholder="password"
-              className="input input-bordered"
+              className="input input-bordered text-white"
               required
             />
             <div className="flex gap-10 mt-2">
@@ -127,8 +129,8 @@ const Login = () => {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </BackgroundGradient>
+    </AuroraBackground>
   );
 };
 
