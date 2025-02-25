@@ -1,10 +1,23 @@
+import "aos/dist/aos.css";
+import Aos from "aos";
+import { useEffect, useContext, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import { FaGoogle } from "react-icons/fa";
-import { useContext, useState } from "react";
-
-import { useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../providers/AuthProvider";
 import useAxiosPublic from "../hooks/useAxiosPublic";
-function Login() {
+import { AuthContext } from "../providers/AuthProvider";
+
+const Login = () => {
+  useEffect(() => {
+    Aos.init({ duration: 1000 });
+  }, []);
+  useEffect(() => {
+    document.title = "Login | TaskManagement";
+  }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { userLogin, setUser, googleSignIn } = useContext(AuthContext);
   const [error, setError] = useState({});
   const location = useLocation();
@@ -31,7 +44,7 @@ function Login() {
 
         toast.success("Login successful!");
         setTimeout(() => {
-          navigate(location?.state ? location.state : "/");
+          navigate(location?.state?.from || "/tasks/create"); // Updated to correct path
         }, 2000);
       })
       .catch((err) => {
@@ -42,28 +55,18 @@ function Login() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const result = await googleSignIn();
-      const user = result.user;
+      const { user } = await googleSignIn();
 
-      // User info to store
-      const userInfo = {
-        email: user.email,
-        name: user.displayName,
-        photo: user.photoURL,
-      };
-
-      // Save user to database
-      await axiosPublic.post("/users", userInfo); // FIX: changed `useAxiosPublic.post` to `axiosPublic.post`
-
-      // Generate token
+      const userInfo = { email: user.email };
       const tokenRes = await axiosPublic.post("/jwt", userInfo);
+
       if (tokenRes.data.token) {
         localStorage.setItem("token", tokenRes.data.token);
       }
 
       toast.success("Google Sign-In successful!");
       setTimeout(() => {
-        navigate("/CreateTask"); // Redirects to CreateTask after login
+        navigate(location?.state?.from || "/tasks/create"); // Updated to correct path
       }, 2000);
     } catch (err) {
       console.error("Google Sign-In failed:", err.message);
@@ -72,56 +75,61 @@ function Login() {
   };
 
   return (
-    <div className="hero bg-base-200 min-h-screen">
-      <div className="hero-content flex-col lg:flex-col">
-        <div className="text-center lg:text-left">
-          <h1 className="text-5xl font-bold text-center">Please Login First</h1>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="card bg-base-100 w-full max-w-sm shadow-2xl p-6">
+        <ToastContainer position="top-center" />
+        <div className="text-center">
+          <h1 className="text-5xl font-bold mb-4">Login now!</h1>
         </div>
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-          <form className="card-body">
-            <div className="form-control">
+        <form onSubmit={handleSubmit} className="card-body">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Email</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              placeholder="email"
+              className="input input-bordered"
+              required
+            />
+          </div>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Password</span>
+            </label>
+            <input
+              type="password"
+              name="password"
+              placeholder="password"
+              className="input input-bordered"
+              required
+            />
+            <div className="flex gap-10 mt-2">
               <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                placeholder="email"
-                className="input input-bordered"
-                required
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="password"
-                className="input input-bordered"
-                required
-              />
-              <label className="label">
-                <a href="#" className="label-text-alt link link-hover">
-                  Forgot password?
-                </a>
-              </label>
-              <div className="mt-5">
-                <button
-                  className="btn rounded-full"
-                  onClick={handleGoogleSignIn}
+                <Link
+                  to="/auth/register"
+                  className="label-text-alt link link-hover"
                 >
-                  Google Sign in <FaGoogle></FaGoogle>
-                </button>
-              </div>
+                  Register Here
+                </Link>
+              </label>
             </div>
-            <div className="form-control mt-6">
-              <button className="btn btn-primary">Login</button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div className="form-control mt-6 flex flex-col">
+            <button className="btn bg-Profile text-white">Login</button>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="btn mt-5"
+            >
+              <FaGoogle /> Login with Google
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
-}
+};
 
 export default Login;

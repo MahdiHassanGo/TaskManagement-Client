@@ -5,7 +5,6 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile,
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
@@ -35,18 +34,33 @@ const AuthProvider = ({ children }) => {
   };
 
   const googleSignIn = async () => {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      if (!result || !result.user) {
+        throw new Error("Sign-in failed. No user returned.");
+      }
+      const user = result.user;
 
-    const userInfo = { email: user.email };
-    await axiosPublic.post("/users", userInfo);
+      const userInfo = { email: user.email };
+      await axiosPublic.post("/users", userInfo).catch((err) => {
+        if (err.response.status === 409) {
+          console.log("User already exists, skipping user creation.");
+        } else {
+          throw err;
+        }
+      });
 
-    const tokenRes = await axiosPublic.post("/jwt", userInfo);
-    if (tokenRes.data.token) {
-      localStorage.setItem("access-token", tokenRes.data.token);
+      const tokenRes = await axiosPublic.post("/jwt", userInfo);
+      if (tokenRes.data.token) {
+        localStorage.setItem("access-token", tokenRes.data.token);
+      }
+
+      setUser(user);
+      return { user };
+    } catch (err) {
+      console.error("Google Sign-In failed:", err.message);
+      throw err;
     }
-
-    setUser(user);
   };
 
   useEffect(() => {

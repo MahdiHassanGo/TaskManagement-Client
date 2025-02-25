@@ -5,15 +5,25 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "./Layout/MainLayout";
 import AuthProvider from "./providers/AuthProvider";
 import HomeLayout from "./Layout/HomeLayout";
+import PrivateRoute from "./routes/PrivateRoutes";
+import WelcomePage from "./components/WelcomePage";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/auth/login",
     element: <MainLayout />,
   },
   {
-    path: "/CreateTask",
-    element: <HomeLayout />,
+    path: "/",
+    element: <WelcomePage />,
+  },
+  {
+    path: "/tasks/create",
+    element: (
+      <PrivateRoute>
+        <HomeLayout />
+      </PrivateRoute>
+    ),
   },
 ]);
 

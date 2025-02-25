@@ -6,7 +6,7 @@ const HomeLayout = () => {
     <div>
       <div>
         <div>
-          <CreateTasks></CreateTasks>
+          <CreateTasks />
         </div>
       </div>
     </div>
