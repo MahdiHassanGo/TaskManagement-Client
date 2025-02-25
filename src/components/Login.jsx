@@ -1,6 +1,63 @@
-import React from "react";
 import { FaGoogle } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../providers/AuthProvider";
 function Login() {
+  const { userLogin, setUser, googleSignIn } = useContext(AuthContext);
+  const [error, setError] = useState({});
+  const location = useLocation();
+  const navigate = useNavigate();
+  const axiosPublic = useAxiosPublic();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
+
+    userLogin(email, password)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+
+        const userInfo = { email: user.email };
+        axiosPublic.post("/jwt", userInfo).then((tokenRes) => {
+          if (tokenRes.data.token) {
+            localStorage.setItem("token", tokenRes.data.token);
+          }
+        });
+
+        toast.success("Login successful!");
+        setTimeout(() => {
+          navigate(location?.state ? location.state : "/");
+        }, 2000);
+      })
+      .catch((err) => {
+        setError({ ...error, login: err.code });
+        toast.error("Login failed: " + err.message);
+      });
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await googleSignIn();
+      const user = result.user;
+
+      const userInfo = { email: user.email };
+      const tokenRes = await axiosPublic.post("/jwt", userInfo);
+
+      if (tokenRes.data.token) {
+        localStorage.setItem("token", tokenRes.data.token);
+      }
+
+      toast.success("Google Sign-In successful!");
+      setTimeout(() => {
+        navigate(location?.state || "/");
+      }, 2000);
+    } catch (err) {
+      console.error("Google Sign-In failed:", err.message);
+      toast.error("Google Sign-In failed: " + err.message);
+    }
+  };
   return (
     <div className="hero bg-base-200 min-h-screen">
       <div className="hero-content flex-col lg:flex-col">
