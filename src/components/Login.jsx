@@ -11,8 +11,9 @@ import { AuroraBackground } from "./ui/aurora-background";
 
 const Login = () => {
   useEffect(() => {
-    Aos.init({ duration: 1000 });
+    Aos.init({ duration: 1000, once: true });
   }, []);
+
   useEffect(() => {
     document.title = "Login | TaskManagement";
   }, []);
@@ -78,58 +79,60 @@ const Login = () => {
 
   return (
     <AuroraBackground className="flex items-center justify-center min-h-screen bg-white">
-      <BackgroundGradient className="card bg-white w-full max-w-sm shadow-2xl p-6 rounded-xl">
-        <ToastContainer position="top-center" />
-        <div className="text-center">
-          <h1 className="text-5xl font-bold mb-4">Login now!</h1>
-        </div>
-        <form onSubmit={handleSubmit} className="card-body">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Email</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="email"
-              className="input input-bordered text-white"
-              required
-            />
+      <div data-aos="fade-up">
+        <BackgroundGradient className="card bg-white w-full max-w-sm shadow-2xl p-6 rounded-xl">
+          <ToastContainer position="top-center" />
+          <div className="text-center">
+            <h1 className="text-5xl font-bold mb-4">Login now!</h1>
           </div>
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Password</span>
-            </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="password"
-              className="input input-bordered text-white"
-              required
-            />
-            <div className="flex gap-10 mt-2">
+          <form onSubmit={handleSubmit} className="card-body">
+            <div className="form-control">
               <label className="label">
-                <Link
-                  to="/auth/register"
-                  className="label-text-alt link link-hover"
-                >
-                  Register Here
-                </Link>
+                <span className="label-text">Email</span>
               </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="email"
+                className="input input-bordered text-white"
+                required
+              />
             </div>
-          </div>
-          <div className="form-control mt-6 flex flex-col">
-            <button className="btn bg-Profile text-white">Login</button>
-            <button
-              type="button"
-              onClick={handleGoogleSignIn}
-              className="btn mt-5"
-            >
-              <FaGoogle /> Login with Google
-            </button>
-          </div>
-        </form>
-      </BackgroundGradient>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Password</span>
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="password"
+                className="input input-bordered text-white"
+                required
+              />
+              <div className="flex gap-10 mt-2">
+                <label className="label">
+                  <Link
+                    to="/auth/register"
+                    className="label-text-alt link link-hover"
+                  >
+                    Register Here
+                  </Link>
+                </label>
+              </div>
+            </div>
+            <div className="form-control mt-6 flex flex-col">
+              <button className="btn bg-Profile text-white">Login</button>
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="btn mt-5"
+              >
+                <FaGoogle /> Login with Google
+              </button>
+            </div>
+          </form>
+        </BackgroundGradient>
+      </div>
     </AuroraBackground>
   );
 };

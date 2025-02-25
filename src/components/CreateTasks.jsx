@@ -1,9 +1,21 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import "aos/dist/aos.css";
+import Aos from "aos";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider"; // Import the AuthContext
 import { FaUser } from "react-icons/fa"; // Import FaUser if needed
+import { WavyBackground } from "./ui/wavy-background";
 
 const CreateTasks = () => {
+  useEffect(() => {
+    Aos.init({ duration: 1000 });
+  }, []);
+  useEffect(() => {
+    document.title = "CreatetTask | TaskManagement";
+  }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { user, logOut } = useContext(AuthContext);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate
@@ -25,16 +37,19 @@ const CreateTasks = () => {
 
   return (
     <div className="hero bg-base-200 min-h-screen">
-      <div className="hero-content flex-col lg:flex-row-reverse">
+      <WavyBackground className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center lg:text-left"></div>
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+        <div
+          className="card bg-gray-100 w-full max-w-sm shrink-0 shadow-2xl"
+          data-aos="fade-up"
+        >
           <div className="card-body">
             <div className="flex justify-between ">
               <div className="relative flex items-center gap-4">
                 {user && user.email ? (
                   <>
                     <img
-                      className="w-10 h-10 rounded-full cursor-pointer"
+                      className="w-20 h-20 rounded-full cursor-pointer"
                       src={userPhoto}
                       alt="User Profile"
                       onClick={toggleUserMenu}
@@ -59,7 +74,7 @@ const CreateTasks = () => {
                   <FaUser className="text-white" />
                 )}
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-2">
                 <Link className="btn" to="/tasks/create">
                   Make tasks
                 </Link>
@@ -90,7 +105,7 @@ const CreateTasks = () => {
             </fieldset>
           </div>
         </div>
-      </div>
+      </WavyBackground>
     </div>
   );
 };
