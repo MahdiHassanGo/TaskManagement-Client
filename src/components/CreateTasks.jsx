@@ -1,24 +1,22 @@
 import React, { useContext, useEffect, useState } from "react";
 import "aos/dist/aos.css";
+import Swal from "sweetalert2";
 import Aos from "aos";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider"; // Import the AuthContext
 import { FaUser } from "react-icons/fa"; // Import FaUser if needed
 import { WavyBackground } from "./ui/wavy-background";
 
 const CreateTasks = () => {
-  useEffect(() => {
-    Aos.init({ duration: 1000 });
-  }, []);
-  useEffect(() => {
-    document.title = "CreatetTask | TaskManagement";
-  }, []);
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   const { user, logOut } = useContext(AuthContext);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate
+
+  useEffect(() => {
+    Aos.init({ duration: 1000 });
+    document.title = "CreateTask | TaskManagement";
+    window.scrollTo(0, 0);
+  }, []);
 
   const toggleUserMenu = () => {
     setIsUserMenuOpen((prev) => !prev);
@@ -33,18 +31,68 @@ const CreateTasks = () => {
     }
   };
 
+  const [taskData, setTaskData] = useState({
+    title: "",
+    description: "",
+    category: "To-Do",
+    userEmail: user?.email || "",
+  });
+
+  const handleChange = (e) => {
+    setTaskData({ ...taskData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const taskWithTimestamp = {
+        ...taskData,
+        timestamp: new Date().toISOString(),
+      };
+
+      const response = await fetch("http://localhost:5001/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskWithTimestamp),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        Swal.fire({
+          title: "Task Created!",
+          text: `Title: ${taskData.title}\nCategory: ${taskData.category}`,
+          icon: "success",
+        });
+        navigate("/tasks/show");
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: result.error || "Failed to create task",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding task:", error);
+      Swal.fire({
+        title: "Error!",
+        text: "Something went wrong. Try again.",
+        icon: "error",
+      });
+    }
+  };
   const userPhoto = user?.photoURL; // Access user photo from context
 
   return (
     <div className="hero bg-base-200 min-h-screen">
       <WavyBackground className="hero-content flex-col lg:flex-row-reverse">
-        <div className="text-center lg:text-left"></div>
         <div
           className="card bg-gray-100 w-full max-w-sm shrink-0 shadow-2xl"
           data-aos="fade-up"
         >
           <div className="card-body">
-            <div className="flex justify-between ">
+            <div className="flex justify-between">
               <div className="relative flex items-center gap-4">
                 {user && user.email ? (
                   <>
@@ -59,14 +107,12 @@ const CreateTasks = () => {
                         <div className="p-4 text-black border-b">
                           {user.displayName}
                         </div>
-                        {user && (
-                          <button
-                            onClick={handleLogOut}
-                            className=" text-black px-1 py-1 md:py-2 md:px-4 rounded hover:bg-opacity-90 transition"
-                          >
-                            Log Out
-                          </button>
-                        )}
+                        <button
+                          onClick={handleLogOut}
+                          className="text-black px-1 py-1 md:py-2 md:px-4 rounded hover:bg-opacity-90 transition"
+                        >
+                          Log Out
+                        </button>
                       </div>
                     )}
                   </>
@@ -84,25 +130,48 @@ const CreateTasks = () => {
               </div>
             </div>
 
-            <fieldset className="fieldset">
-              <label className="fieldset-label">Task Title</label>
-              <input
-                type="text"
-                className="input"
-                placeholder="Enter your task title"
-              />
-              <label className="fieldset-label">Task Description</label>
-              <input
-                type="text"
-                className="input"
-                placeholder="Enter task description"
-              />
-              <label className="fieldset-label">Task Timestamp</label>
-              <input type="text" className="input" placeholder="Timestamp" />
-              <label className="fieldset-label">Category</label>
-              <input type="text" className="input" placeholder="Category" />
-              <button className="btn btn-neutral mt-4">Create Task</button>
-            </fieldset>
+            {/* Task Form */}
+            <form onSubmit={handleSubmit}>
+              <fieldset className="fieldset">
+                <label className="fieldset-label">Task Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={taskData.title}
+                  onChange={handleChange}
+                  className="input"
+                  placeholder="Enter task title"
+                  required
+                />
+
+                <label className="fieldset-label">Task Description</label>
+                <input
+                  type="text"
+                  name="description"
+                  value={taskData.description}
+                  onChange={handleChange}
+                  className="input"
+                  placeholder="Enter task description"
+                  required
+                />
+
+                <label className="fieldset-label">Category</label>
+                <select
+                  name="category"
+                  value={taskData.category}
+                  onChange={handleChange}
+                  className="input"
+                >
+                  <option value="To-Do">To-Do</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Done">Done</option>
+                </select>
+
+                <button type="submit" className="btn btn-neutral mt-4">
+                  Create Task
+                </button>
+              </fieldset>
+            </form>
           </div>
         </div>
       </WavyBackground>

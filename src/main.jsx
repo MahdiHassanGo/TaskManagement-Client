@@ -7,6 +7,7 @@ import AuthProvider from "./providers/AuthProvider";
 import HomeLayout from "./Layout/HomeLayout";
 import PrivateRoute from "./routes/PrivateRoutes";
 import WelcomePage from "./components/WelcomePage";
+import ShowTask from "./components/ShowTask";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,14 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <HomeLayout />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/tasks/show",
+    element: (
+      <PrivateRoute>
+        <ShowTask />
       </PrivateRoute>
     ),
   },
