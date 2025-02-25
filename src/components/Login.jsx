@@ -1,6 +1,9 @@
 import { FaGoogle } from "react-icons/fa";
+import { useContext, useState } from "react";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider";
+import useAxiosPublic from "../hooks/useAxiosPublic";
 function Login() {
   const { userLogin, setUser, googleSignIn } = useContext(AuthContext);
   const [error, setError] = useState({});
@@ -42,22 +45,32 @@ function Login() {
       const result = await googleSignIn();
       const user = result.user;
 
-      const userInfo = { email: user.email };
-      const tokenRes = await axiosPublic.post("/jwt", userInfo);
+      // User info to store
+      const userInfo = {
+        email: user.email,
+        name: user.displayName,
+        photo: user.photoURL,
+      };
 
+      // Save user to database
+      await axiosPublic.post("/users", userInfo); // FIX: changed `useAxiosPublic.post` to `axiosPublic.post`
+
+      // Generate token
+      const tokenRes = await axiosPublic.post("/jwt", userInfo);
       if (tokenRes.data.token) {
         localStorage.setItem("token", tokenRes.data.token);
       }
 
       toast.success("Google Sign-In successful!");
       setTimeout(() => {
-        navigate(location?.state || "/");
+        navigate("/CreateTask"); // Redirects to CreateTask after login
       }, 2000);
     } catch (err) {
       console.error("Google Sign-In failed:", err.message);
       toast.error("Google Sign-In failed: " + err.message);
     }
   };
+
   return (
     <div className="hero bg-base-200 min-h-screen">
       <div className="hero-content flex-col lg:flex-col">
@@ -93,7 +106,10 @@ function Login() {
                 </a>
               </label>
               <div className="mt-5">
-                <button className="btn rounded-full">
+                <button
+                  className="btn rounded-full"
+                  onClick={handleGoogleSignIn}
+                >
                   Google Sign in <FaGoogle></FaGoogle>
                 </button>
               </div>

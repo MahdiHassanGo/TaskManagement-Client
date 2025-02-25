@@ -10,8 +10,9 @@ const firebaseConfig = {
   projectId: "taskmanagement-cf552",
   storageBucket: "taskmanagement-cf552.firebasestorage.app",
   messagingSenderId: "799122099003",
-  appId: "1:799122099003:web:3660d13d8d8e47032a851e"
+  appId: "1:799122099003:web:3660d13d8d8e47032a851e",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+export default app;
