@@ -50,13 +50,16 @@ const CreateTasks = () => {
         timestamp: new Date().toISOString(),
       };
 
-      const response = await fetch("http://localhost:5001/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(taskWithTimestamp),
-      });
+      const response = await fetch(
+        "https://task-server-orcin.vercel.app/tasks",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(taskWithTimestamp),
+        }
+      );
 
       const result = await response.json();
       if (response.ok) {
@@ -87,9 +90,9 @@ const CreateTasks = () => {
 
   return (
     <div className="hero bg-base-200 min-h-screen">
-      <WavyBackground className="hero-content flex flex-col lg:flex-row-reverse">
+      <WavyBackground className="hero-content flex flex-col lg:flex-row-reverse w-full">
         <div
-          className="card bg-gray-100 w-full max-w-sm shrink-0 ml-70 mt-100 md:mt-0 md:ml-0  shadow-2xl p-4"
+          className="card bg-gray-100 w-full max-w-sm shrink-0 shadow-2xl p-4 mx-auto"
           data-aos="fade-up"
         >
           <div className="card-body">
@@ -98,7 +101,7 @@ const CreateTasks = () => {
                 {user && user.email ? (
                   <>
                     <img
-                      className="w-16 h-16 rounded-full cursor-pointer"
+                      className="w-10 h-10 md:w-16 md:h-16 rounded-full cursor-pointer"
                       src={userPhoto}
                       alt="User Profile"
                       onClick={toggleUserMenu}
