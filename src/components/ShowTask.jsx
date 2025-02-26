@@ -44,7 +44,6 @@ const TaskCard = ({ task, moveTask, onEdit, onDelete }) => {
         </div>
       </div>
       <p className="text-sm text-gray-600">{task.description}</p>
-
       {isDragging && (
         <div className="md:hidden text-xs text-blue-500 mt-2 text-center">
           Drag to another column
@@ -108,7 +107,7 @@ const ShowTask = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [dragInstructions, setDragInstructions] = useState(true);
   const [editingTask, setEditingTask] = useState(null);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -144,7 +143,7 @@ const ShowTask = () => {
       } catch (err) {
         console.error("Error fetching tasks:", err);
       } finally {
-        setLoading(false); // Hide loading after fetching tasks
+        setLoading(false);
       }
     };
 
@@ -227,10 +226,9 @@ const ShowTask = () => {
       if (result.isConfirmed && result.value) {
         const updatedTask = {
           title: result.value,
-          description: task.description, // Ensure this is not lost
+          description: task.description,
           category: task.category,
         };
-        console.log("Updating task with data:", updatedTask); // Debugging
         await editTask(task._id, updatedTask);
       }
     });
@@ -292,7 +290,7 @@ const ShowTask = () => {
       <WavyBackground>
         <div className="max-w-6xl mx-auto p-4 md:p-6 text-black flex flex-col items-center">
           {loading ? (
-            <Loading /> // Show loading component
+            <Loading />
           ) : (
             <>
               {isMobile && dragInstructions && (
