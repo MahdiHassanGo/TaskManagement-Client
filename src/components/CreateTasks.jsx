@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import "aos/dist/aos.css";
-import Swal from "sweetalert2";
 import Aos from "aos";
+import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider"; // Import the AuthContext
 import { FaUser } from "react-icons/fa"; // Import FaUser if needed
@@ -120,10 +120,7 @@ const CreateTasks = () => {
                   <FaUser className="text-white" />
                 )}
               </div>
-              <div className="flex flex-col gap-2">
-                <Link className="btn" to="/tasks/create">
-                  Make tasks
-                </Link>
+              <div className="flex flex-col justify-center">
                 <Link className="btn" to="/tasks/show">
                   Show tasks
                 </Link>

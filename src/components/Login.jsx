@@ -27,6 +27,7 @@ const Login = () => {
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
 
+  // In your Login.jsx
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -35,19 +36,9 @@ const Login = () => {
 
     userLogin(email, password)
       .then((result) => {
-        const user = result.user;
-        setUser(user);
-
-        const userInfo = { email: user.email };
-        axiosPublic.post("/jwt", userInfo).then((tokenRes) => {
-          if (tokenRes.data.token) {
-            localStorage.setItem("token", tokenRes.data.token);
-          }
-        });
-
         toast.success("Login successful!");
         setTimeout(() => {
-          navigate(location?.state?.from || "/tasks/create"); // Updated to correct path
+          navigate(location?.state?.from || "/tasks/create");
         }, 2000);
       })
       .catch((err) => {
@@ -56,20 +47,13 @@ const Login = () => {
       });
   };
 
+  // Fix in your handleGoogleSignIn function
   const handleGoogleSignIn = async () => {
     try {
       const { user } = await googleSignIn();
-
-      const userInfo = { email: user.email };
-      const tokenRes = await axiosPublic.post("/jwt", userInfo);
-
-      if (tokenRes.data.token) {
-        localStorage.setItem("token", tokenRes.data.token);
-      }
-
       toast.success("Google Sign-In successful!");
       setTimeout(() => {
-        navigate(location?.state?.from || "/tasks/create"); // Updated to correct path
+        navigate(location?.state?.from || "/tasks/create");
       }, 2000);
     } catch (err) {
       console.error("Google Sign-In failed:", err.message);
@@ -86,42 +70,7 @@ const Login = () => {
             <h1 className="text-5xl font-bold mb-4">Login now!</h1>
           </div>
           <form onSubmit={handleSubmit} className="card-body">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                placeholder="email"
-                className="input input-bordered text-white"
-                required
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="password"
-                className="input input-bordered text-white"
-                required
-              />
-              <div className="flex gap-10 mt-2">
-                <label className="label">
-                  <Link
-                    to="/auth/register"
-                    className="label-text-alt link link-hover"
-                  >
-                    Register Here
-                  </Link>
-                </label>
-              </div>
-            </div>
             <div className="form-control mt-6 flex flex-col">
-              <button className="btn bg-Profile text-white">Login</button>
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
