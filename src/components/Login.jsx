@@ -51,7 +51,10 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     try {
       const { user } = await googleSignIn();
-      toast.success("Google Sign-In successful!");
+
+      toast.success("Google Sign-In successful!", {
+        position: "top-center",
+      });
       setTimeout(() => {
         navigate(location?.state?.from || "/tasks/create");
       }, 2000);
