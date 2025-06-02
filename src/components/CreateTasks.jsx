@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider";
 import { FaUser } from "react-icons/fa";
 import { WavyBackground } from "./ui/wavy-background";
+import axios from "axios";
 
 const CreateTasks = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -28,6 +29,48 @@ const CreateTasks = () => {
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
+    }
+  };
+
+  const handleGroupTask = async () => {
+    try {
+      if (!user) {
+        Swal.fire({
+          title: "Error!",
+          text: "Please log in to create a group task",
+          icon: "error",
+        });
+        return;
+      }
+
+      const response = await axios.post(
+        "http://localhost:5001/groups",
+        {
+          name: `${user.displayName || user.email}'s Group`,
+          adminEmail: user.email,
+          createdAt: new Date().toISOString(),
+        }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        const groupId = response.data._id;
+        Swal.fire({
+          title: "Success!",
+          text: "Group created successfully",
+          icon: "success",
+        }).then(() => {
+          navigate(`/groups/${groupId}`);
+        });
+      } else {
+        throw new Error("Failed to create group");
+      }
+    } catch (error) {
+      console.error("Error creating group:", error);
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.message || "Failed to create group. Please try again.",
+        icon: "error",
+      });
     }
   };
 
@@ -112,8 +155,14 @@ const CreateTasks = () => {
                           {user.displayName}
                         </div>
                         <button
+                          onClick={handleGroupTask}
+                          className="text-black px-1 py-1 md:py-2 md:px-4 rounded hover:bg-opacity-90 transition w-full text-left"
+                        >
+                          Grouped Task
+                        </button>
+                        <button
                           onClick={handleLogOut}
-                          className="text-black px-1 py-1 md:py-2 md:px-4 rounded hover:bg-opacity-90 transition"
+                          className="text-black px-1 py-1 md:py-2 md:px-4 rounded hover:bg-opacity-90 transition w-full text-left"
                         >
                           Log Out
                         </button>

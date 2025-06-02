@@ -60,8 +60,6 @@ const AuthProvider = ({ children }) => {
     const tokenRes = await axiosPublic.post("/jwt", userInfo);
     if (tokenRes.data.token) {
       saveToken(tokenRes.data.token);
-
-      // Save user email for tasks
       localStorage.setItem("userEmail", result.user.email);
     }
 
@@ -97,8 +95,6 @@ const AuthProvider = ({ children }) => {
       const tokenRes = await axiosPublic.post("/jwt", userInfo);
       if (tokenRes.data.token) {
         saveToken(tokenRes.data.token);
-
-        // Save user email for tasks
         localStorage.setItem("userEmail", user.email);
       }
 
@@ -123,8 +119,6 @@ const AuthProvider = ({ children }) => {
             const tokenRes = await axiosPublic.post("/jwt", userInfo);
             if (tokenRes.data.token) {
               saveToken(tokenRes.data.token);
-
-              // Save user email for tasks
               localStorage.setItem("userEmail", currentUser.email);
             }
           } catch (error) {
@@ -162,19 +156,19 @@ const AuthProvider = ({ children }) => {
     };
   }, [axiosPublic]);
 
+  const authInfo = {
+    user,
+    setUser,
+    createNewUser,
+    logOut,
+    userLogin,
+    googleSignIn,
+    loading,
+  };
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser,
-        createNewUser,
-        logOut,
-        userLogin,
-        googleSignIn,
-        loading,
-      }}
-    >
-      {children}
+    <AuthContext.Provider value={authInfo}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
