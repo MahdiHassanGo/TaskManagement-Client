@@ -7,24 +7,24 @@ const Home = () => {
 
   return (
     <WavyBackground>
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-8">Welcome to Task Management</h1>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center w-full max-w-md">
+          <h1 className="text-3xl md:text-4xl font-bold mb-6 md:mb-8">Welcome to Task Management</h1>
           {user ? (
-            <div className="space-y-4">
-              <Link to="/tasks/create" className="btn btn-primary mr-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Link to="/tasks/create" className="btn btn-primary w-full sm:w-auto">
                 Create Task
               </Link>
-              <Link to="/tasks/show" className="btn btn-secondary">
+              <Link to="/tasks/show" className="btn btn-secondary w-full sm:w-auto">
                 View Tasks
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
-              <Link to="/login" className="btn btn-primary mr-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Link to="/login" className="btn btn-primary w-full sm:w-auto">
                 Login
               </Link>
-              <Link to="/register" className="btn btn-secondary">
+              <Link to="/register" className="btn btn-secondary w-full sm:w-auto">
                 Register
               </Link>
             </div>

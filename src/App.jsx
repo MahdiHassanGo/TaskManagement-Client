@@ -40,6 +40,15 @@ function App() {
           errorElement={<ErrorBoundary />}
         />
         <Route 
+          path="/groups/:groupId/join" 
+          element={
+            <PrivateRoute>
+              <GroupTasks />
+            </PrivateRoute>
+          }
+          errorElement={<ErrorBoundary />}
+        />
+        <Route 
           path="/groups/:groupId/create" 
           element={
             <PrivateRoute>
