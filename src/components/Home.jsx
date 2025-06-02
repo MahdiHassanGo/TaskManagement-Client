@@ -18,6 +18,9 @@ const Home = () => {
               <Link to="/tasks/show" className="btn btn-secondary w-full sm:w-auto">
                 View Tasks
               </Link>
+              <Link to="/groups" className="btn btn-accent w-full sm:w-auto">
+                View Group Tasks
+              </Link>
             </div>
           ) : (
             <div className="flex flex-col sm:flex-row justify-center gap-4">

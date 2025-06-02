@@ -11,6 +11,8 @@ import Swal from "sweetalert2";
 import Loading from "./Loading";
 import { AuthContext } from "../providers/AuthProvider";
 import { useContext } from "react";
+import useAxiosPublic from '../hooks/useAxiosPublic';
+import { useAuth } from '../providers/AuthProvider';
 
 const ItemType = { TASK: "task" };
 
@@ -112,6 +114,7 @@ const GroupTasks = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
+  const axiosPublic = useAxiosPublic();
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -138,8 +141,8 @@ const GroupTasks = () => {
         }
 
         const [groupResponse, tasksResponse] = await Promise.all([
-          axios.get(`http://localhost:5001/groups/${groupId}`),
-          axios.get(`http://localhost:5001/groups/${groupId}/tasks`)
+          axiosPublic.get(`/groups/${groupId}`),
+          axiosPublic.get(`/groups/${groupId}/tasks`)
         ]);
 
         setGroup(groupResponse.data);
@@ -160,7 +163,7 @@ const GroupTasks = () => {
     };
 
     fetchGroupData();
-  }, [groupId, user]);
+  }, [groupId, user, axiosPublic]);
 
   const updateTaskCategory = async (taskId, newCategory) => {
     try {
