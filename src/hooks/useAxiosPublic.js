@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const useAxiosPublic = () => {
   const axiosPublic = axios.create({
-    baseURL: 'http://localhost:5001',
+    baseURL: 'https://task-server-orcin.vercel.app',
     withCredentials: true
   });
 

@@ -8,8 +8,6 @@ import useAxiosPublic from "../hooks/useAxiosPublic";
 import { AuthContext } from "../providers/AuthProvider";
 import { BackgroundGradient } from "./ui/background-gradient";
 import { AuroraBackground } from "./ui/aurora-background";
-import { useAuth } from "../providers/AuthProvider";
-import Swal from "sweetalert2";
 
 const Login = () => {
   useEffect(() => {
@@ -28,36 +26,25 @@ const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
-  const { signIn } = useAuth();
 
-  const handleSubmit = async (e) => {
+  // In your Login.jsx
+  const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
     const email = form.email.value;
     const password = form.password.value;
 
-    try {
-      const result = await signIn(email, password);
-      if (result.user) {
-        Swal.fire({
-          title: "Success!",
-          text: "Login successful!",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false
-        });
-        navigate("/"); // Redirect to home page
-      }
-    } catch (error) {
-      console.error(error);
-      setError("Invalid email or password");
-      Swal.fire({
-        title: "Error!",
-        text: "Invalid email or password",
-        icon: "error",
-        confirmButtonText: "Try Again"
+    userLogin(email, password)
+      .then((result) => {
+        toast.success("Login successful!");
+        setTimeout(() => {
+          navigate(location?.state?.from || "/");
+        }, 2000);
+      })
+      .catch((err) => {
+        setError({ ...error, login: err.code });
+        toast.error("Login failed: " + err.message);
       });
-    }
   };
 
   // Fix in your handleGoogleSignIn function
