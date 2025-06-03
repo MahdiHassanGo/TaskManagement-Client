@@ -327,14 +327,26 @@ const GroupTasksList = () => {
                     <div key={member} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2">
                         <span className="text-xs sm:text-sm font-medium line-clamp-1">{member}</span>
+                        {member === selectedGroup.adminEmail && (
+                          <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Admin</span>
+                        )}
                       </div>
                       <div className="flex gap-1 sm:gap-2">
-                        <button
-                          onClick={() => handleUpdateRole(member, 'admin')}
-                          className="btn btn-xs btn-info text-xs"
-                        >
-                          Make Admin
-                        </button>
+                        {member === selectedGroup.adminEmail ? (
+                          <button
+                            onClick={() => handleUpdateRole(member, 'member')}
+                            className="btn btn-xs btn-warning text-xs"
+                          >
+                            Make Member
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleUpdateRole(member, 'admin')}
+                            className="btn btn-xs btn-info text-xs"
+                          >
+                            Make Admin
+                          </button>
+                        )}
                         {member !== user?.email && (
                           <button
                             onClick={() => handleKickMember(selectedGroup._id, member)}
