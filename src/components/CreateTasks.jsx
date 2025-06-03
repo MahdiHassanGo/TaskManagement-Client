@@ -154,12 +154,7 @@ const CreateTasks = () => {
                         <div className="p-4 text-black border-b">
                           {user.displayName}
                         </div>
-                        <button
-                          onClick={handleGroupTask}
-                          className="text-black px-1 py-1 md:py-2 md:px-4 rounded hover:bg-opacity-90 transition w-full text-left"
-                        >
-                          Grouped Task
-                        </button>
+                       
                         <button
                           onClick={handleLogOut}
                           className="text-black px-1 py-1 md:py-2 md:px-4 rounded hover:bg-opacity-90 transition w-full text-left"
@@ -218,6 +213,12 @@ const CreateTasks = () => {
                 <button type="submit" className="btn btn-neutral mt-4 w-full">
                   Create Task
                 </button>
+                <Link
+              to={`/`}
+              className="btn px-6 py-2 bg-black text-white rounded-md hover:bg-gray-100 hover:text-black transition"
+            >
+            Back
+            </Link>
               </fieldset>
             </form>
           </div>

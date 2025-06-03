@@ -317,13 +317,19 @@ const ShowTask = () => {
                 )}
               </div>
 
-              <div className="flex justify-center mt-6 md:mt-10">
+              <div className="flex justify-center mt-6 md:mt-10 gap-4">
                 <Link
                   to="/tasks/create"
                   className="btn px-6 py-2 bg-black text-white rounded-md hover:bg-gray-100 hover:text-black transition"
                 >
                   Add Task
                 </Link>
+                <Link
+              to={`/`}
+              className="btn px-6 py-2 bg-black text-white rounded-md hover:bg-gray-100 hover:text-black transition"
+            >
+            Back
+            </Link>
               </div>
             </>
           )}

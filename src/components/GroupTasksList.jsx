@@ -204,49 +204,49 @@ const GroupTasksList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-2 sm:px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Group Tasks</h1>
-          <div className="flex gap-4">
-            <Link to="/" className="btn bg-black btn-outline">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">Group Tasks</h1>
+          <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto">
+            <Link to="/" className="btn btn-sm sm:btn-md bg-black btn-outline flex-1 sm:flex-none text-xs sm:text-sm">
               Back to Home
             </Link>
-            <Link to="/tasks/create" className="btn  btn-primary">
+            <Link to="/tasks/create" className="btn btn-sm sm:btn-md btn-primary flex-1 sm:flex-none text-xs sm:text-sm">
               Create New Group
             </Link>
           </div>
         </div>
 
         {groups.length === 0 ? (
-          <div className="text-center py-12">
-            <h2 className="text-xl text-gray-600 mb-4">No groups found</h2>
-            <Link to="/tasks/create" className="btn btn-primary">
+          <div className="text-center py-8 sm:py-12">
+            <h2 className="text-lg sm:text-xl text-gray-600 mb-3 sm:mb-4">No groups found</h2>
+            <Link to="/tasks/create" className="btn btn-sm sm:btn-md btn-primary text-xs sm:text-sm">
               Create Your First Group
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {groups.map((group) => (
               <div
                 key={group._id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                className="bg-white rounded-lg shadow-md p-3 sm:p-6 hover:shadow-lg transition-shadow"
               >
-                <h3 className="text-xl text-black font-semibold mb-2">{group.name}</h3>
-                <p className="text-gray-600 mb-2">
+                <h3 className="text-lg sm:text-xl text-black font-semibold mb-1 sm:mb-2 line-clamp-1">{group.name}</h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-1 sm:mb-2">
                   Admin: {group.adminEmail === user?.email ? 'You' : group.adminEmail}
                 </p>
                 {group.members && group.members.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-sm font-semibold text-gray-700 mb-1">Members:</p>
-                    <ul className="text-sm text-gray-600">
+                  <div className="mb-3 sm:mb-4">
+                    <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-1">Members:</p>
+                    <ul className="text-xs sm:text-sm text-gray-600">
                       {group.members.map((member) => (
                         <li key={member} className="flex justify-between items-center mb-1">
-                          <span>{member}</span>
+                          <span className="line-clamp-1">{member}</span>
                           {group.adminEmail === user?.email && member !== user?.email && (
                             <button
                               onClick={() => handleKickMember(group._id, member)}
-                              className="text-white hover:text-red-700 text-xs btn btn-xs btn-error"
+                              className="text-white hover:text-red-700 text-xs btn btn-xs btn-error ml-2"
                             >
                               Kick
                             </button>
@@ -256,10 +256,10 @@ const GroupTasksList = () => {
                     </ul>
                   </div>
                 )}
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-wrap gap-1 sm:gap-2 mt-3 sm:mt-4">
                   <Link
                     to={`/groups/${group._id}`}
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-xs sm:btn-sm btn-primary flex-1 sm:flex-none text-xs sm:text-sm"
                   >
                     View Tasks
                   </Link>
@@ -267,19 +267,19 @@ const GroupTasksList = () => {
                     <>
                       <Link
                         to={`/groups/${group._id}/create`}
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-xs sm:btn-sm btn-secondary flex-1 sm:flex-none text-xs sm:text-sm"
                       >
                         Add Task
                       </Link>
                       <button
                         onClick={() => handleManageMembers(group)}
-                        className="btn btn-info btn-sm"
+                        className="btn btn-xs sm:btn-sm btn-info flex-1 sm:flex-none text-xs sm:text-sm"
                       >
                         Manage Members
                       </button>
                       <button
                         onClick={() => handleDeleteGroup(group._id)}
-                        className="btn btn-error btn-sm"
+                        className="btn btn-xs sm:btn-sm btn-error flex-1 sm:flex-none text-xs sm:text-sm"
                       >
                         Delete Group
                       </button>
@@ -287,7 +287,7 @@ const GroupTasksList = () => {
                   ) : (
                     <button
                       onClick={() => handleLeaveGroup(group._id)}
-                      className="btn btn-error btn-sm"
+                      className="btn btn-xs sm:btn-sm btn-error flex-1 sm:flex-none text-xs sm:text-sm"
                     >
                       Leave Group
                     </button>
@@ -300,20 +300,20 @@ const GroupTasksList = () => {
 
         {/* Manage Members Modal */}
         {showManageModal && selectedGroup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 text-black">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
-              <h3 className="text-xl font-semibold mb-4">Manage Members - {selectedGroup.name}</h3>
-              <div className="space-y-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 text-black">
+            <div className="bg-white rounded-lg p-3 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Manage Members - {selectedGroup.name}</h3>
+              <div className="space-y-2 sm:space-y-4">
                 {/* Show admin first */}
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center justify-between p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{selectedGroup.adminEmail}</span>
+                    <span className="text-xs sm:text-sm font-medium line-clamp-1">{selectedGroup.adminEmail}</span>
                     <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Admin</span>
                   </div>
                   {selectedGroup.members.length > 1 && (
                     <button
                       onClick={() => handleUpdateRole(selectedGroup.adminEmail, 'member')}
-                      className="btn btn-xs btn-warning"
+                      className="btn btn-xs btn-warning text-xs"
                     >
                       Make Member
                     </button>
@@ -324,21 +324,21 @@ const GroupTasksList = () => {
                 {selectedGroup.members
                   .filter(member => member !== selectedGroup.adminEmail)
                   .map((member) => (
-                    <div key={member} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div key={member} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{member}</span>
+                        <span className="text-xs sm:text-sm font-medium line-clamp-1">{member}</span>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1 sm:gap-2">
                         <button
                           onClick={() => handleUpdateRole(member, 'admin')}
-                          className="btn btn-xs btn-info"
+                          className="btn btn-xs btn-info text-xs"
                         >
                           Make Admin
                         </button>
                         {member !== user?.email && (
                           <button
                             onClick={() => handleKickMember(selectedGroup._id, member)}
-                            className="btn btn-xs btn-error text-white"
+                            className="btn btn-xs btn-error text-white text-xs"
                           >
                             Kick
                           </button>
@@ -347,10 +347,10 @@ const GroupTasksList = () => {
                     </div>
                   ))}
               </div>
-              <div className="mt-6 flex justify-end">
+              <div className="mt-4 sm:mt-6 flex justify-end">
                 <button
                   onClick={() => setShowManageModal(false)}
-                  className="btn btn-sm"
+                  className="btn btn-xs sm:btn-sm text-xs"
                 >
                   Close
                 </button>

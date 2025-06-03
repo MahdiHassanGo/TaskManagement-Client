@@ -23,36 +23,52 @@ const TaskCard = ({ task, moveTask, onEdit, onDelete, isAdmin }) => {
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: true,
   });
 
   return (
     <div
       ref={drag}
-      className={`bg-gray-100 p-3 rounded-md mb-3 shadow cursor-pointer transition-transform duration-300 ${
+      className={`bg-gray-100 p-2 sm:p-3 rounded-md mb-2 sm:mb-3 shadow cursor-move transition-transform duration-300 ${
         isDragging ? "opacity-50 scale-105" : "opacity-100"
       }`}
       style={{
         touchAction: "none",
+        WebkitTouchCallout: "none",
+        WebkitUserSelect: "none",
+        userSelect: "none",
         transform: isDragging ? "scale(1.05)" : "scale(1)",
       }}
     >
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-md font-bold">{task.title}</h3>
+      <div className="flex justify-between items-center mb-1 sm:mb-2">
+        <h3 className="text-sm sm:text-md font-bold line-clamp-1">{task.title}</h3>
         {isAdmin && (
-          <div className="flex space-x-2">
-            <button onClick={() => onEdit(task)} className="text-blue-500">
+          <div className="flex space-x-1 sm:space-x-2">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(task);
+              }} 
+              className="text-blue-500 text-xs sm:text-sm"
+            >
               Edit
             </button>
-            <button onClick={() => onDelete(task._id)} className="text-red-500">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(task._id);
+              }} 
+              className="text-red-500 text-xs sm:text-sm"
+            >
               Delete
             </button>
           </div>
         )}
       </div>
-      <p className="text-sm text-gray-600">{task.description}</p>
+      <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">{task.description}</p>
       <p className="text-xs text-gray-500 mt-1">Created by: {task.createdBy}</p>
       {isDragging && (
-        <div className="md:hidden text-xs text-blue-500 mt-2 text-center">
+        <div className="md:hidden text-xs text-blue-500 mt-1 text-center">
           Drag to another column
         </div>
       )}
@@ -71,16 +87,26 @@ const TaskColumn = ({ category, tasks, moveTask, onEdit, onDelete, isAdmin }) =>
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
+    hover: (item, monitor) => {
+      if (item.category !== category) {
+        // Add visual feedback when hovering over a valid drop target
+        const element = document.querySelector(`[data-category="${category}"]`);
+        if (element) {
+          element.classList.add('drop-target-hover');
+        }
+      }
+    },
   });
 
   return (
     <div
       ref={drop}
-      className={`bg-white p-4 rounded-lg shadow-md min-h-[300px] w-full border ${
+      data-category={category}
+      className={`bg-white p-2 sm:p-4 rounded-lg shadow-md min-h-[200px] sm:min-h-[300px] w-full border ${
         isOver ? "border-blue-400 bg-blue-50" : "border-gray-200"
       } transition-colors duration-200`}
     >
-      <h2 className="text-lg font-semibold mb-3">{category}</h2>
+      <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">{category}</h2>
       {tasks.length > 0 ? (
         tasks.map((task) => (
           <TaskCard
@@ -93,10 +119,10 @@ const TaskColumn = ({ category, tasks, moveTask, onEdit, onDelete, isAdmin }) =>
           />
         ))
       ) : (
-        <p className="text-gray-500 text-sm">No tasks available</p>
+        <p className="text-gray-500 text-xs sm:text-sm">No tasks available</p>
       )}
       {isOver && tasks.length === 0 && (
-        <div className="border-2 border-dashed border-blue-300 rounded-md p-4 mt-2 text-center text-blue-400">
+        <div className="border-2 border-dashed border-blue-300 rounded-md p-2 sm:p-4 mt-2 text-center text-blue-400 text-xs sm:text-sm">
           Drop here
         </div>
       )}
@@ -114,6 +140,7 @@ const GroupTasks = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
+  const [dragInstructions, setDragInstructions] = useState(true);
   const axiosPublic = useAxiosPublic();
 
   useEffect(() => {
@@ -131,6 +158,10 @@ const GroupTasks = () => {
     window.addEventListener("resize", checkMobile);
 
     return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const dismissInstructions = useCallback(() => {
+    setDragInstructions(false);
   }, []);
 
   useEffect(() => {
@@ -167,19 +198,24 @@ const GroupTasks = () => {
 
   const updateTaskCategory = async (taskId, newCategory) => {
     try {
-      await axios.patch(
-        `https://task-server-orcin.vercel.app/groups/${groupId}/tasks/${taskId}`,
-        {
-          category: newCategory,
-        }
-      );
+      await axiosPublic.patch(`/groups/${groupId}/tasks/${taskId}`, {
+        category: newCategory,
+        userEmail: user.email
+      });
+      
       setTasks((prev) =>
         prev.map((task) =>
           task._id === taskId ? { ...task, category: newCategory } : task
         )
       );
+      dismissInstructions();
     } catch (error) {
       console.error("Failed to update task:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.message || "Failed to update task category.",
+      });
     }
   };
 
@@ -196,14 +232,12 @@ const GroupTasks = () => {
     }).then(async (result) => {
       if (result.isConfirmed && result.value) {
         try {
-          await axios.patch(
-            `https://task-server-orcin.vercel.app/groups/${groupId}/tasks/${task._id}`,
-            {
-              title: result.value,
-              description: task.description,
-              category: task.category,
-            }
-          );
+          await axiosPublic.patch(`/groups/${groupId}/tasks/${task._id}`, {
+            title: result.value,
+            description: task.description,
+            category: task.category,
+            userEmail: user.email
+          });
           setTasks((prev) =>
             prev.map((t) =>
               t._id === task._id
@@ -221,7 +255,7 @@ const GroupTasks = () => {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Failed to update task.",
+            text: error.response?.data?.message || "Failed to update task.",
           });
         }
       }
@@ -242,9 +276,9 @@ const GroupTasks = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(
-            `https://task-server-orcin.vercel.app/groups/${groupId}/tasks/${taskId}`
-          );
+          await axiosPublic.delete(`/groups/${groupId}/tasks/${taskId}`, {
+            data: { userEmail: user.email }
+          });
           setTasks((prev) => prev.filter((task) => task._id !== taskId));
           Swal.fire("Deleted!", "Your task has been deleted.", "success");
         } catch (error) {
@@ -252,7 +286,7 @@ const GroupTasks = () => {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Failed to delete task.",
+            text: error.response?.data?.message || "Failed to delete task.",
           });
         }
       }
@@ -287,11 +321,29 @@ const GroupTasks = () => {
   const backendOptions = {
     enableMouseEvents: true,
     enableTouchEvents: true,
-    delayTouchStart: isMobile ? 200 : 0,
-    touchSlop: 20,
+    delayTouchStart: 100,
+    touchSlop: 10,
     ignoreContextMenu: true,
-    delay: isMobile ? 150 : 0,
+    delay: 0,
+    enableKeyboardEvents: true,
+    enableHoverOutsideTarget: true,
+    touchStartDelay: 100,
+    touchStartDelayOnly: true,
   };
+
+  // Add touch event handlers
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      if (e.target.closest('.task-card')) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+    };
+  }, []);
 
   if (!user) {
     return (
@@ -351,15 +403,24 @@ const GroupTasks = () => {
       options={backendOptions}
     >
       <WavyBackground>
-        <div className="max-w-6xl mx-auto p-4 md:p-6 text-black flex flex-col items-center">
-          <div className="w-full mb-6">
-            <h1 className="text-2xl font-bold mb-2">{group.name || "Group Tasks"}</h1>
-            <p className="text-gray-600">
+        <div className="max-w-6xl mx-auto p-2 sm:p-4 md:p-6 text-black flex flex-col items-center">
+          {isMobile && dragInstructions && (
+            <div
+              className="bg-blue-50 border border-blue-200 rounded-md p-2 sm:p-3 mb-3 sm:mb-4 text-xs sm:text-sm text-blue-700 w-full"
+              onClick={dismissInstructions}
+            >
+              Press and hold a task for a moment to start dragging
+            </div>
+          )}
+
+          <div className="w-full mb-4 sm:mb-6">
+            <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">{group.name || "Group Tasks"}</h1>
+            <p className="text-sm sm:text-base text-gray-600">
               {isAdmin ? "You are the admin" : "You are a member"}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 md:gap-6 w-full">
             {Object.entries(categorizedTasks).map(([category, taskList]) => (
               <TaskColumn
                 key={category}
@@ -373,17 +434,23 @@ const GroupTasks = () => {
             ))}
           </div>
 
-          <div className="flex justify-center gap-4 mt-6 md:mt-10">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 sm:mt-6 md:mt-10">
+            <Link
+              to={`/`}
+              className="btn btn-sm sm:btn-md px-3 sm:px-6 py-1 sm:py-2 bg-black text-white rounded-md hover:bg-gray-100 hover:text-black transition text-xs sm:text-sm"
+            >
+              Back
+            </Link>
             <Link
               to={`/groups/${groupId}/create`}
-              className="btn px-6 py-2 bg-black text-white rounded-md hover:bg-gray-100 hover:text-black transition"
+              className="btn btn-sm sm:btn-md px-3 sm:px-6 py-1 sm:py-2 bg-black text-white rounded-md hover:bg-gray-100 hover:text-black transition text-xs sm:text-sm"
             >
               Add Task
             </Link>
             {isAdmin && (
               <button
                 onClick={handleInvite}
-                className="btn px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                className="btn btn-sm sm:btn-md px-3 sm:px-6 py-1 sm:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-xs sm:text-sm"
               >
                 Invite
               </button>

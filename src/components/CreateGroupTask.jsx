@@ -2,13 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider";
 import { WavyBackground } from "./ui/wavy-background";
-import axios from "axios";
+import useAxiosPublic from '../hooks/useAxiosPublic';
 import Swal from "sweetalert2";
 
 const CreateGroupTask = () => {
   const { groupId } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const axiosPublic = useAxiosPublic();
+  const [loading, setLoading] = useState(false);
   const [taskData, setTaskData] = useState({
     title: "",
     description: "",
@@ -28,9 +30,10 @@ const CreateGroupTask = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post(
-        `http://localhost:5001/groups/${groupId}/tasks`,
+      const response = await axiosPublic.post(
+        `/groups/${groupId}/tasks`,
         taskData
       );
 
@@ -47,9 +50,11 @@ const CreateGroupTask = () => {
       console.error("Error creating task:", error);
       Swal.fire({
         title: "Error!",
-        text: error.response?.data?.message || "Failed to create task",
+        text: error.response?.data?.message || "Failed to create task. Please try again.",
         icon: "error"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,7 +75,7 @@ const CreateGroupTask = () => {
   }
 
   return (
-    <div className="hero bg-base-200 min-h-screen">
+    <div className="hero bg-base-200 min-h-screen text-black">
       <WavyBackground className="hero-content flex flex-col lg:flex-row-reverse w-full">
         <div className="card bg-gray-100 w-full max-w-sm shrink-0 shadow-2xl p-4 mx-auto">
           <div className="card-body">
@@ -85,8 +90,9 @@ const CreateGroupTask = () => {
                   name="title"
                   value={taskData.title}
                   onChange={handleChange}
-                  className="input input-bordered"
+                  className="input input-bordered text-black"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -98,8 +104,9 @@ const CreateGroupTask = () => {
                   name="description"
                   value={taskData.description}
                   onChange={handleChange}
-                  className="textarea textarea-bordered h-24"
+                  className="textarea textarea-bordered h-24 text-black"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -111,7 +118,8 @@ const CreateGroupTask = () => {
                   name="category"
                   value={taskData.category}
                   onChange={handleChange}
-                  className="select select-bordered"
+                  className="select select-bordered text-black"
+                  disabled={loading}
                 >
                   <option value="To-Do">To-Do</option>
                   <option value="In Progress">In Progress</option>
@@ -124,11 +132,20 @@ const CreateGroupTask = () => {
                   type="button"
                   onClick={() => navigate(`/groups/${groupId}`)}
                   className="btn btn-ghost"
+                  disabled={loading}
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  Create Task
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    "Create Task"
+                  )}
                 </button>
               </div>
             </form>
