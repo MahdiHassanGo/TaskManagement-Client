@@ -1,8 +1,10 @@
 # Task Management Web App
 
 A modern, collaborative task management application that allows users to create, manage, and track tasks in groups. Built with React and Node.js, this application provides a seamless experience for team collaboration and task organization.
+Live Link: https://taskmanagement-cf552.web.app
 
-![Task Management App](https://i.ibb.co/your-screenshot.png)
+![image](https://github.com/user-attachments/assets/89739741-1a8d-4240-9efa-49bcdf7036be)
+
 
 ## 🌟 Features
 
@@ -11,6 +13,9 @@ A modern, collaborative task management application that allows users to create,
 - Profile management with display name and photo
 - Secure login and registration system
 - Role-based access control (Admin/Member)
+![image](https://github.com/user-attachments/assets/36ea7085-6ace-470b-9914-c181c3b77c45)
+
+
 
 ### Group Management
 - Create and manage multiple task groups
@@ -19,7 +24,7 @@ A modern, collaborative task management application that allows users to create,
 - Manage member roles and permissions
 - Kick members from groups
 - Leave groups as a member
-
+![image](https://github.com/user-attachments/assets/c41a1aee-d12d-4028-a8c3-475fdc701865)
 ### Task Management
 - Create, edit, and delete tasks
 - Drag-and-drop task organization
@@ -27,6 +32,7 @@ A modern, collaborative task management application that allows users to create,
 - Real-time task updates
 - Task assignment and tracking
 - Mobile-responsive task board
+![image](https://github.com/user-attachments/assets/940ccd90-b945-4ce4-8040-102e1e038ff8)
 
 ### Collaboration Features
 - Real-time updates across team members
@@ -34,6 +40,7 @@ A modern, collaborative task management application that allows users to create,
 - Task comments and discussions
 - Member activity tracking
 - Shared task boards
+![image](https://github.com/user-attachments/assets/1a5b67f7-7c2b-4ad9-a708-59fa97de85db)
 
 ### UI/UX Features
 - Responsive design for all devices
@@ -151,13 +158,10 @@ Features optimized for mobile:
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 👥 Authors
 
-- Your Name - Initial work
+-Mahdi Hassan Noor Asif - Initial work
 
 ## 🙏 Acknowledgments
 
@@ -167,4 +171,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-Made with ❤️ by [Your Name]
