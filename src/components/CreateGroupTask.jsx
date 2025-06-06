@@ -90,7 +90,7 @@ const CreateGroupTask = () => {
                   name="title"
                   value={taskData.title}
                   onChange={handleChange}
-                  className="input input-bordered text-black"
+                  className="input input-bordered text-white"
                   required
                   disabled={loading}
                 />
@@ -104,7 +104,7 @@ const CreateGroupTask = () => {
                   name="description"
                   value={taskData.description}
                   onChange={handleChange}
-                  className="textarea textarea-bordered h-24 text-black"
+                  className="textarea textarea-bordered h-24 text-white"
                   required
                   disabled={loading}
                 />
@@ -118,7 +118,7 @@ const CreateGroupTask = () => {
                   name="category"
                   value={taskData.category}
                   onChange={handleChange}
-                  className="select select-bordered text-black"
+                  className="select select-bordered text-white"
                   disabled={loading}
                 >
                   <option value="To-Do">To-Do</option>

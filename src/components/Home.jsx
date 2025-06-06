@@ -16,7 +16,7 @@ const Home = () => {
                 Create Task
               </Link>
               <Link to="/tasks/show" className="btn btn-secondary w-full sm:w-auto">
-                View Tasks
+                View My Tasks
               </Link>
               <Link to="/groups" className="btn btn-accent w-full sm:w-auto">
                 View Group Tasks

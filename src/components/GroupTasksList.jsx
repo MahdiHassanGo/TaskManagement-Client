@@ -3,14 +3,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAxiosPublic from '../hooks/useAxiosPublic';
 import { useAuth } from '../providers/AuthProvider';
 import Swal from 'sweetalert2';
+import axios from 'axios';
+import { FaUser } from 'react-icons/fa';
 
 const GroupTasksList = () => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [showManageModal, setShowManageModal] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const axiosPublic = useAxiosPublic();
-  const { user } = useAuth();
+  const { user, logOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -153,6 +156,48 @@ const GroupTasksList = () => {
     setShowManageModal(true);
   };
 
+  const handleGroupTask = async () => {
+    try {
+      if (!user) {
+        Swal.fire({
+          title: "Error!",
+          text: "Please log in to create a group task",
+          icon: "error",
+        });
+        return;
+      }
+
+      const response = await axiosPublic.post(
+        "/groups",
+        {
+          name: `${user.displayName || user.email}'s Group`,
+          adminEmail: user.email,
+          createdAt: new Date().toISOString(),
+        }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        const groupId = response.data._id;
+        Swal.fire({
+          title: "Success!",
+          text: "Group created successfully",
+          icon: "success",
+        }).then(() => {
+          navigate(`/groups/${groupId}`);
+        });
+      } else {
+        throw new Error("Failed to create group");
+      }
+    } catch (error) {
+      console.error("Error creating group:", error);
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.message || "Failed to create group. Please try again.",
+        icon: "error",
+      });
+    }
+  };
+
   const handleUpdateRole = async (memberEmail, newRole) => {
     try {
       const result = await Swal.fire({
@@ -195,6 +240,21 @@ const GroupTasksList = () => {
     }
   };
 
+  const handleLogOut = async () => {
+    try {
+      await logOut();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen((prev) => !prev);
+  };
+
+  const userPhoto = user?.photoURL;
+
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
@@ -209,12 +269,44 @@ const GroupTasksList = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">Group Tasks</h1>
           <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto">
+          <div className="relative flex items-center gap-4">
+                {user && user.email ? (
+                  <>
+                    <img
+                      className="w-10 h-10 md:w-16 md:h-16 rounded-full cursor-pointer"
+                      src={userPhoto}
+                      alt="User Profile"
+                      onClick={toggleUserMenu}
+                    />
+                    {isUserMenuOpen && (
+                      <div className="absolute top-10 left-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-30">
+                        <div className="p-4 text-black border-b">
+                          {user.displayName}
+                        </div>
+                       
+                        <button
+                          onClick={handleLogOut}
+                          className="text-black px-1 py-1 md:py-2 md:px-4 rounded hover:bg-opacity-90 transition w-full text-left"
+                        >
+                          Log Out
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <FaUser className="text-white" />
+                )}
+              </div>
             <Link to="/" className="btn btn-sm sm:btn-md bg-black btn-outline flex-1 sm:flex-none text-xs sm:text-sm">
               Back to Home
             </Link>
-            <Link to="/tasks/create" className="btn btn-sm sm:btn-md btn-primary flex-1 sm:flex-none text-xs sm:text-sm">
-              Create New Group
-            </Link>
+          
+            <button
+              onClick={handleGroupTask}
+              className="btn btn-sm sm:btn-md btn-secondary flex-1 sm:flex-none text-xs sm:text-sm"
+            >
+              Create Group Task
+            </button>
           </div>
         </div>
 
